@@ -1,3 +1,5 @@
+![Sample Output](./OutputSample.jpg)
+
 ## Note: 
 - For build, tested only with GCC of Mingw-w64 v12.1.0
 - For use, tested only on Windows 11 with Windows Terminal v1.15.2875.0
