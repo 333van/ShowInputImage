@@ -1,7 +1,5 @@
 ![Sample Output](./OutputSample.jpg)
 
-<video src='demo.mp4'>
-
 ## Note: 
 
 - For build, tested only with GCC of Mingw-w64 v12.1.0
