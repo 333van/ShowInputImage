@@ -11,8 +11,8 @@ int main(int Arguments_Count, char** Arguments_Value)
 {
     // Data: CONSTANTS
     const int OUT_CHANNELS_NUM    = 3;   // aka, Components, or Number of Components
-    const int OUT_WIDTH_MAX       = 300; // <-- Configure it
-    const int OUT_WIDTH_MIN       = 10;  // <-- Configure it
+    const int OUT_WIDTH_MAX       = 1080; // <-- Configure it
+    const int OUT_WIDTH_MIN       = 16;  // <-- Configure it
     // https://en.wikipedia.org/wiki/ANSI_escape_code#24-bit
     const char TERMINAL_PIXEL_STRING_HEAD[] = "\033[48;2;"; // Background Color Mode
     const char TERMINAL_PIXEL_STRING_TAIL[] = "\033[m";
