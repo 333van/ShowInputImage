@@ -22,10 +22,10 @@ input.jpg <# Input Image path #> `
 <#
 Use PowerShell and nircmd to create 'siiX', resulting in a high resolution output.
 Adjusting OUT_WIDTH_MAX in ./main.c per your display device is recommended.
-nircmd: https://nircmd.nirsoft.net/sendkeypress.html
-PowerShell (pwsh): https://github.com/PowerShell/PowerShell
+- nircmd: https://nircmd.nirsoft.net/sendkeypress.html
+- PowerShell (pwsh): https://github.com/PowerShell/PowerShell
 This could be implemented in C with the 'SendInput' function, but I don't plan to do so.
-https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-sendinput
+- SendInput(): https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-sendinput
 #>
 function siiX($imagePath, $zoomLevel=10, $sleepTime=0.5, $zoomInterval=0.05) {
   function Zoom($mode='in'){
