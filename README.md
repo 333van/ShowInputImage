@@ -27,7 +27,7 @@ PowerShell (pwsh): https://github.com/PowerShell/PowerShell
 This could be implemented in C with the 'SendInput' function, but I don't plan to do so.
 https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-sendinput
 #>
-function siiX($image_path, $delay=5, $zoomLevel=10, $sleepTime=0.5, $zoomInterval=0.05) {
+function siiX($imagePath, $delay=5, $zoomLevel=10, $sleepTime=0.5, $zoomInterval=0.05) {
   function Zoom($mode='in'){
     $zoomTime = 0
     while($zoomTime -lt $zoomLevel){
@@ -41,7 +41,7 @@ function siiX($image_path, $delay=5, $zoomLevel=10, $sleepTime=0.5, $zoomInterva
   }
   Zoom -Mode 'in'
   Start-Sleep $sleepTime
-  sii $image_path
+  sii $imagePath
   $UserInput = Read-Host
   Zoom -Mode 'out'
 }
