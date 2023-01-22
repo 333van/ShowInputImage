@@ -27,7 +27,7 @@ PowerShell (pwsh): https://github.com/PowerShell/PowerShell
 This could be implemented in C with the 'SendInput' function, but I don't plan to do so.
 https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-sendinput
 #>
-function siiX($imagePath, $delay=5, $zoomLevel=10, $sleepTime=0.5, $zoomInterval=0.05) {
+function siiX($imagePath, $zoomLevel=10, $sleepTime=0.5, $zoomInterval=0.05) {
   function Zoom($mode='in'){
     $zoomTime = 0
     while($zoomTime -lt $zoomLevel){
@@ -40,9 +40,9 @@ function siiX($imagePath, $delay=5, $zoomLevel=10, $sleepTime=0.5, $zoomInterval
     }
   }
   Zoom -Mode 'in'
-  Start-Sleep $sleepTime
+  Start-Sleep $sleepTime # for detecting the terminal width and height accurately
   sii $imagePath
-  $UserInput = Read-Host
+  $UserInput = Read-Host # pause before restoring the zoom level, just press Enter
   Zoom -Mode 'out'
 }
 
