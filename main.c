@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <windows.h>
 
 // https://github.com/nothings/stb/
 #define STB_IMAGE_IMPLEMENTATION
@@ -9,13 +10,19 @@
 int main(int Arguments_Count, char** Arguments_Value)
 {
     // Data: CONSTANTS
-    const int OUT_CHANNELS_NUM    = 3;  // aka, Components, or Number of Components
-    const int OUT_WIDTH_MAX       = 90; // <-- Configure it
-    const int OUT_WIDTH_DEFAULT   = 50; // <-- Configure it
-    const int OUT_WIDTH_MIN       = 10; // <-- Configure it
+    const int OUT_CHANNELS_NUM    = 3;   // aka, Components, or Number of Components
+    const int OUT_WIDTH_MAX       = 300; // <-- Configure it
+    const int OUT_WIDTH_MIN       = 10;  // <-- Configure it
     // https://en.wikipedia.org/wiki/ANSI_escape_code#24-bit
     const char TERMINAL_PIXEL_STRING_HEAD[] = "\033[48;2;"; // Background Color Mode
     const char TERMINAL_PIXEL_STRING_TAIL[] = "\033[m";
+
+    CONSOLE_SCREEN_BUFFER_INFO ConsoleScreenBufferInfo;
+    int TerminalHorizontalPixelCount;
+    int TerminalVerticalPixelCount;
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &ConsoleScreenBufferInfo);
+    TerminalHorizontalPixelCount = (ConsoleScreenBufferInfo.srWindow.Right - ConsoleScreenBufferInfo.srWindow.Left + 1)/2;
+    TerminalVerticalPixelCount = ConsoleScreenBufferInfo.srWindow.Bottom - ConsoleScreenBufferInfo.srWindow.Top + 1;
 
     const char HELP_DOC[] = 
 "ShowInputImage (sii)\n\n"
@@ -43,14 +50,18 @@ int main(int Arguments_Count, char** Arguments_Value)
     // Data: User Input: Out_Width
     int Out_Width = atoi(Arguments_Value[2]);
     if(Out_Width == 0){
-        Out_Width = OUT_WIDTH_DEFAULT;
-    }else{
-        if(Out_Width > OUT_WIDTH_MAX){
-            Out_Width = OUT_WIDTH_MAX;
-        }
-        if(Out_Width < OUT_WIDTH_MIN){
-            Out_Width = OUT_WIDTH_MIN;
-        }
+        Out_Width = TerminalHorizontalPixelCount;
+    }
+
+    if(Out_Width > OUT_WIDTH_MAX){
+        Out_Width = OUT_WIDTH_MAX;
+    }
+    if(Out_Width < OUT_WIDTH_MIN){
+        Out_Width = OUT_WIDTH_MIN;
+    }
+
+    if(Out_Width > TerminalHorizontalPixelCount){
+        Out_Width = TerminalHorizontalPixelCount;
     }
 
     // Data: Generated
@@ -73,6 +84,14 @@ int main(int Arguments_Count, char** Arguments_Value)
     double Out_Width_f    = Out_Width;
     double Out_Height_f = ( Image_Height_f / Image_Width_f ) * Out_Width_f;
     int Out_Height = Out_Height_f;
+
+    if(Out_Height > TerminalVerticalPixelCount){
+        Out_Height = TerminalVerticalPixelCount;
+        Out_Height_f = Out_Height;
+        Out_Width_f = ( Out_Height_f / Image_Height_f ) * Image_Width_f;
+        Out_Width = Out_Width_f;
+    }
+
     unsigned char* Resized_Image_Data = malloc( Out_Width * Out_Height * OUT_CHANNELS_NUM );
     stbir_resize_uint8(
         Image_Data,   Image_Width, Image_Height, 0,
