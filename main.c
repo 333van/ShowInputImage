@@ -14,15 +14,16 @@ int main(int Arguments_Count, char** Arguments_Value)
     const int OUT_WIDTH_MAX       = 1080; // <-- Configure it
     const int OUT_WIDTH_MIN       = 16;  // <-- Configure it
     // https://en.wikipedia.org/wiki/ANSI_escape_code#24-bit
-    const char TERMINAL_PIXEL_STRING_HEAD[] = "\033[48;2;"; // Background Color Mode
+    const char TERMINAL_PIXEL_STRING_FOREGROUND_COLOR_HEAD[] = "\033[38;2;";
+    const char TERMINAL_PIXEL_STRING_BACKGROUND_COLOR_HEAD[] = ";48;2;";
     const char TERMINAL_PIXEL_STRING_TAIL[] = "\033[m";
 
     CONSOLE_SCREEN_BUFFER_INFO ConsoleScreenBufferInfo;
     int TerminalHorizontalPixelCount;
     int TerminalVerticalPixelCount;
     GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &ConsoleScreenBufferInfo);
-    TerminalHorizontalPixelCount = (ConsoleScreenBufferInfo.srWindow.Right - ConsoleScreenBufferInfo.srWindow.Left + 1)/2;
-    TerminalVerticalPixelCount = ConsoleScreenBufferInfo.srWindow.Bottom - ConsoleScreenBufferInfo.srWindow.Top + 1;
+    TerminalHorizontalPixelCount = ((ConsoleScreenBufferInfo.srWindow.Right - ConsoleScreenBufferInfo.srWindow.Left + 1)/2) * 2;
+    TerminalVerticalPixelCount = (ConsoleScreenBufferInfo.srWindow.Bottom - ConsoleScreenBufferInfo.srWindow.Top + 1) * 2;
 
     const char HELP_DOC[] = 
 "ShowInputImage (sii)\n\n"
@@ -92,6 +93,9 @@ int main(int Arguments_Count, char** Arguments_Value)
         Out_Width = Out_Width_f;
     }
 
+    // Using U+2580 (Upper Half Block), and hence upscaling he size
+    // https://www.compart.com/en/unicode/block/U+2580    
+
     unsigned char* Resized_Image_Data = malloc( Out_Width * Out_Height * OUT_CHANNELS_NUM );
     stbir_resize_uint8(
         Image_Data,   Image_Width, Image_Height, 0,
@@ -101,25 +105,42 @@ int main(int Arguments_Count, char** Arguments_Value)
     // Text: Output Image
     int Pixel_Num_Max = Out_Width * Out_Height;
 
+    int x_Tracker = 0;
+
     for(
         int Pixel_Num_Current = 0; 
         Pixel_Num_Current<Pixel_Num_Max;
         Pixel_Num_Current++
         )
     {
-        int R_Index = Pixel_Num_Current * 3;
-        int G_Index = Pixel_Num_Current * 3 + 1;
-        int B_Index = Pixel_Num_Current * 3 + 2;
-        int R = Resized_Image_Data[R_Index];
-        int G = Resized_Image_Data[G_Index];
-        int B = Resized_Image_Data[B_Index];
-        printf("%s%d;%d;%dm  %s", 
-            TERMINAL_PIXEL_STRING_HEAD,
-            R, G, B,
+        int Upper_R_Index = Pixel_Num_Current * 3;
+        int Upper_G_Index = Pixel_Num_Current * 3 + 1;
+        int Upper_B_Index = Pixel_Num_Current * 3 + 2;
+        int Upper_R = Resized_Image_Data[Upper_R_Index];
+        int Upper_G = Resized_Image_Data[Upper_G_Index];
+        int Upper_B = Resized_Image_Data[Upper_B_Index];
+
+        int Lower_R_Index = (Pixel_Num_Current + Out_Width) * 3;
+        int Lower_G_Index = (Pixel_Num_Current + Out_Width) * 3 + 1;
+        int Lower_B_Index = (Pixel_Num_Current + Out_Width) * 3 + 2;
+        int Lower_R = Resized_Image_Data[Lower_R_Index];
+        int Lower_G = Resized_Image_Data[Lower_G_Index];
+        int Lower_B = Resized_Image_Data[Lower_B_Index];
+        
+        printf("%s%d;%d;%d%s%d;%d;%dm▀%s", 
+            TERMINAL_PIXEL_STRING_FOREGROUND_COLOR_HEAD,
+            Upper_R, Upper_G, Upper_B,
+            TERMINAL_PIXEL_STRING_BACKGROUND_COLOR_HEAD,
+            Lower_R, Lower_G, Lower_B,
             TERMINAL_PIXEL_STRING_TAIL
         );
         if(Pixel_Num_Current != 0 && (Pixel_Num_Current+1)%Out_Width == 0){
             printf("\n");
+        }
+        x_Tracker += 1;
+        if(x_Tracker == Out_Width){
+          Pixel_Num_Current += Out_Width;
+          x_Tracker = 0;
         }
     }
 

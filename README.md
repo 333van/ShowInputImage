@@ -1,9 +1,9 @@
 ![Sample Output](./OutputSample.jpg)
 
 ## Note: 
-
+- If on Linux, use [chafa](https://github.com/hpjansson/chafa)
 - For build, tested only with GCC of Mingw-w64 v12.1.0
-- For use, tested only on Windows 11 with Windows Terminal v1.15.2875.0
+- For use, tested only on the latest version of Windows 11 and Windows Terminal
 - Questions? Read the source, for it's short
 
 ## Build
