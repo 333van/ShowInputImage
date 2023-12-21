@@ -2,6 +2,7 @@
 
 ## Note: 
 - If on Linux, use [chafa](https://github.com/hpjansson/chafa)
+  - If on Windows, check out: https://gist.github.com/333van/b6dddb11c998498ff2072144dffdeff0
 - For build, tested only with GCC of Mingw-w64 v12.1.0
 - For use, tested only on the latest version of Windows 11 and Windows Terminal
 - Questions? Read the source, for it's short
